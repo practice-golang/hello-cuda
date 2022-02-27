@@ -4,3 +4,7 @@ calc.exp
 calc.lib
 libcalc.a
 hello-cuda.exe
+
+cu-calc/hello.exp
+cu-calc/hello.lib
+cu-calc/hello.exe

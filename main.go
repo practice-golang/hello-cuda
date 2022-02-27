@@ -7,11 +7,11 @@ import "C"
 import "fmt"
 
 func main() {
-	fmt.Println("^_^")
+	fmt.Println("Begin:")
 
 	r, err := C.sayHello()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(int(r))
+	fmt.Println("sayHello return: ", int(r))
 }
