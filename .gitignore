@@ -1,0 +1,6 @@
+calc.def
+calc.dll
+calc.exp
+calc.lib
+libcalc.a
+hello-cuda.exe
