@@ -1,8 +1,9 @@
 # Taste CUDA
 
 ## Used tools
-* CUDA Toolkit v11.6
-* VS2017 Express
+* [CUDA Toolkit 11.6](https://developer.nvidia.com/cuda-11-6-0-download-archive?target_os=Windows&target_arch=x86_64&target_version=11&target_type=exe_local)
+* [VS2017 Express](https://visualstudio.microsoft.com/ko/vs/express)
+* [MinGW-W64 10.3.0](https://github.com/brechtsanders/winlibs_mingw)
 
 ## Compile
 ```dos
