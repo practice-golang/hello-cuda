@@ -1,8 +1,37 @@
 #include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
+#include <cuda_runtime.h>
 
-#define N 10000000
+// #define N 10000000 // 1meg
+#define N 100000000 // 10meg
 #define MAX_ERR 1e-6
+
+
+int printStatus() {
+    int deviceCount;
+    cudaGetDeviceCount(&deviceCount);
+
+    for (int i = 0; i < deviceCount; ++i) {
+        cudaDeviceProp deviceProp;
+        cudaGetDeviceProperties(&deviceProp, i);
+
+        printf("Device %d:\n", i);
+        printf("  Name: %s\n", deviceProp.name);
+        printf("  Compute Capability: %d.%d\n", deviceProp.major, deviceProp.minor);
+        printf("  Total Global Memory: %zu bytes\n", deviceProp.totalGlobalMem);
+        printf("  Multiprocessors: %d\n", deviceProp.multiProcessorCount);
+
+        size_t freeMem, totalMem;
+        cudaMemGetInfo(&freeMem, &totalMem);
+        printf("  Used Memory: %zu bytes\n", totalMem - freeMem);
+        printf("  Free Memory: %zu bytes\n", freeMem);
+        printf("  Total Memory: %zu bytes\n", totalMem);
+        printf("\n");
+    }
+
+    return 0;
+}
 
 __global__ void vector_add(float *out, float *a, float *b, int n) {
     printf("Hello World from GPU!\n");
@@ -16,13 +45,13 @@ __global__ void vector_add(float *out, float *a, float *b, int n) {
 extern "C" {
 #endif
 
+float *a, *b, *out;
+float *d_a, *d_b, *d_out;
+
 #ifdef _WIN32
 __declspec(dllexport)
 #endif
 int sayHello() {
-    float *a, *b, *out;
-    float *d_a, *d_b, *d_out;
-
     a = (float *)malloc(sizeof(float) * N);
     b = (float *)malloc(sizeof(float) * N);
     out = (float *)malloc(sizeof(float) * N);
@@ -55,6 +84,16 @@ int sayHello() {
     printf("out[0] = %f\n", out[0]);
     printf("PASSED\n");
 
+    printf("GPU Status:\n");
+    printStatus();
+
+    return 0;
+}
+
+#ifdef _WIN32
+__declspec(dllexport)
+#endif
+int freeMem() {
     // Deallocate device memory
     cudaFree(d_a);
     cudaFree(d_b);
@@ -64,6 +103,9 @@ int sayHello() {
     free(a);
     free(b);
     free(out);
+
+    printf("GPU Status:\n");
+    printStatus();
 
     return 0;
 }

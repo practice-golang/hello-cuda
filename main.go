@@ -4,14 +4,23 @@ package main // import "hello-cuda"
 // #cgo LDFLAGS: -L. -lcalc
 // #include <calc.cuh>
 import "C"
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
 	fmt.Println("Begin:")
 
-	r, err := C.sayHello()
-	if err != nil {
-		panic(err)
+	for {
+		r, err := C.sayHello()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("sayHello return: ", int(r))
+
+		C.freeMem()
+
+		time.Sleep(2 * time.Second)
 	}
-	fmt.Println("sayHello return: ", int(r))
 }
