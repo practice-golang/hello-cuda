@@ -1,10 +1,10 @@
-calc.def
-calc.dll
-calc.exp
-calc.lib
-libcalc.a
+hello.def
+hello.dll
+hello.exp
+hello.lib
+libhello.a
 hello-cuda.exe
 
-cu-calc/hello.exp
-cu-calc/hello.lib
-cu-calc/hello.exe
+cu-hello/hello.exp
+cu-hello/hello.lib
+cu-hello/hello.exe

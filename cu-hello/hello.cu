@@ -3,12 +3,13 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
+#include "hello.h"
+
 // #define N 10000000 // 1meg
 #define N 100000000 // 10meg
 #define MAX_ERR 1e-6
 
-
-int printStatus() {
+void printStatus() {
     int deviceCount;
     cudaGetDeviceCount(&deviceCount);
 
@@ -29,8 +30,6 @@ int printStatus() {
         printf("  Total Memory: %zu bytes\n", totalMem);
         printf("\n");
     }
-
-    return 0;
 }
 
 __global__ void vector_add(float *out, float *a, float *b, int n) {
@@ -41,16 +40,9 @@ __global__ void vector_add(float *out, float *a, float *b, int n) {
     }
 }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 float *a, *b, *out;
 float *d_a, *d_b, *d_out;
 
-#ifdef _WIN32
-__declspec(dllexport)
-#endif
 int sayHello() {
     a = (float *)malloc(sizeof(float) * N);
     b = (float *)malloc(sizeof(float) * N);
@@ -90,9 +82,6 @@ int sayHello() {
     return 0;
 }
 
-#ifdef _WIN32
-__declspec(dllexport)
-#endif
 int freeMem() {
     // Deallocate device memory
     cudaFree(d_a);
@@ -109,7 +98,3 @@ int freeMem() {
 
     return 0;
 }
-
-#ifdef __cplusplus
-}
-#endif
