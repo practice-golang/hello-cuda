@@ -1,4 +1,1 @@
-nvcc calc.cu -o ../calc.dll --shared
-
-@REM nvcc main.cu -o hello
-
+nvcc -Xcompiler "/wd4819" calc.cu -o ../calc.dll --shared
