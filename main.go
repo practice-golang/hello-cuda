@@ -1,7 +1,7 @@
 package main // import "hello-cuda"
 
 // #cgo CFLAGS: -I./cu-hello
-// #cgo LDFLAGS: -L. -lhello
+// #cgo LDFLAGS: -static -L. -lstdc++ -lhello
 // #include "hello.h"
 import "C"
 import (

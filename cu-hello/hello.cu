@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <assert.h>
-#include <stdio.h>
 #include <cuda_runtime.h>
 
 #include "hello.h"
