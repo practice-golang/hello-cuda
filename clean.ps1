@@ -5,6 +5,9 @@ rm -f hello.dll
 rm -f hello.o
 rm -f hello.obj
 rm -f libhello.a
+rm -f wrapper.o
+rm -f wrapper.a
+rm -f libwrapper.a
 rm -f "hello-cuda.exe"
 
 rm -f cu-hello/hello.exp

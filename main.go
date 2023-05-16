@@ -1,8 +1,8 @@
 package main // import "hello-cuda"
 
-// #cgo CFLAGS: -I./cu-hello
-// #cgo LDFLAGS: -static -L. -lstdc++ -lhello
-// #include "hello.h"
+// #cgo CFLAGS: -Icu-wrapper -Icu-hello
+// #cgo LDFLAGS: -static -L. -lwrapper -lhello -lstdc++
+// #include "wrapper.h"
 import "C"
 import (
 	"fmt"
@@ -13,13 +13,13 @@ func main() {
 	fmt.Println("Begin:")
 
 	for {
-		r, err := C.sayHello()
+		r, err := C.say_hello()
 		if err != nil {
 			panic(err)
 		}
 		fmt.Println("sayHello return: ", int(r))
 
-		C.freeMem()
+		C.free_mem()
 
 		time.Sleep(2 * time.Second)
 	}

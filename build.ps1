@@ -4,9 +4,9 @@
 # cd ..
 
 # gendef ./hello.dll
-# dlltool -dllname ./hello.dll --def ./hello.def --output-lib ./libhello.a
+# dlltool -k -d ./hello.def -l ./libhello.a
 
-# gcc -I./msvc-hello -L. hello-c_main/main.c -o main.exe -lhello
+# gcc -I./msvc-hello hello-c_main/main.c -o main.exe -static -L. -lhello
 
 
 <# cgo practice #>
@@ -15,6 +15,10 @@ cd cu-hello
 cd ..
 
 gendef ./hello.dll
-dlltool -dllname ./hello.dll --def ./hello.def --output-lib ./libhello.a
+dlltool -k -d ./hello.def -l ./libhello.a
 
-go build
+cd cu-wrapper
+./compile.ps1
+cd ..
+
+go build -ldflags "-w -s"

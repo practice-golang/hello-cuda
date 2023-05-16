@@ -3,6 +3,8 @@ hello.dll
 hello.exp
 hello.lib
 libhello.a
+wrapper.o
+libwrapper.a
 hello-cuda.exe
 
 cu-hello/hello.exp
