@@ -39,10 +39,30 @@ __global__ void vector_add(float *out, float *a, float *b, int n) {
     }
 }
 
+int *hostData;
+int *deviceData;
+
 float *a, *b, *out;
 float *d_a, *d_b, *d_out;
 
 int sayHello() {
+    // CUDA malloc host memory
+    // size_t memSize = N * sizeof(int);
+    size_t memSize = 1024 * sizeof(int);
+    cudaError_t error = cudaMallocHost((void**)&hostData, memSize);
+    if (error != cudaSuccess) {
+        printf("cudaMallocHost returned error code %d, line(%d)\n", error, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+    // CUDA malloc device memory
+    error = cudaMalloc((void**)&deviceData, memSize);
+    if (error != cudaSuccess) {
+        printf("cudaMalloc returned error code %d, line(%d)\n", error, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+
     a = (float *)malloc(sizeof(float) * N);
     b = (float *)malloc(sizeof(float) * N);
     out = (float *)malloc(sizeof(float) * N);
@@ -91,6 +111,10 @@ int freeMem() {
     free(a);
     free(b);
     free(out);
+
+    // CUDA freee host memory
+    cudaFreeHost(hostData);
+    cudaFree(deviceData);
 
     printf("GPU Status:\n");
     printStatus();
