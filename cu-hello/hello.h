@@ -8,8 +8,9 @@
 extern "C" {
 #endif
 
-MY_API int sayHello();
-MY_API int freeMem();
+MY_API void* getContainer();
+MY_API int sayHello(void* container);
+MY_API int freeMem(void* container);
 
 #ifdef __cplusplus
 }

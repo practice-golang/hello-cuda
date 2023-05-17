@@ -2,8 +2,9 @@
 extern "C" {
 #endif
 
-int say_hello();
-int free_mem();
+void* new_container();
+int say_hello(void* container);
+int free_mem(void* container);
 
 #ifdef __cplusplus
 }

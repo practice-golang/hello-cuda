@@ -13,14 +13,19 @@ func main() {
 	fmt.Println("Begin:")
 
 	for {
-		r, err := C.say_hello()
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("sayHello return: ", int(r))
+		go func() {
+			container := C.new_container()
 
-		C.free_mem()
+			r, err := C.say_hello(container)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println("sayHello return: ", int(r))
 
-		time.Sleep(2 * time.Second)
+			C.free_mem(container)
+
+			time.Sleep(2 * time.Second)
+		}()
+		time.Sleep(7 * time.Second)
 	}
 }

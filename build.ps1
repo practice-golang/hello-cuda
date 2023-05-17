@@ -1,12 +1,17 @@
 # <# c practice #>
-# cd msvc-hello
+# # cd msvc-hello
+# # ./compile.ps1
+# # cd ..
+
+# cd cu-hello
 # ./compile.ps1
 # cd ..
 
 # gendef ./hello.dll
 # dlltool -k -d ./hello.def -l ./libhello.a
 
-# gcc -I./msvc-hello hello-c_main/main.c -o main.exe -static -L. -lhello
+# # gcc -I./msvc-hello hello-c_main/main.c -o main.exe -static -L. -lhello
+# gcc -I./cu-hello hello-c_main/main.c -o main.exe -static -L. -lhello
 
 
 <# cgo practice #>

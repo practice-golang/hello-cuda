@@ -4,14 +4,18 @@
 #include "hello.h"
 #include "wrapper.h"
 
-int say_hello() {
-    sayHello();
+void* new_container() {
+    return getContainer();
+}
+
+int say_hello(void* container) {
+    sayHello(container);
 
     return 0;
 }
 
-int free_mem() {
-    freeMem();
+int free_mem(void* container) {
+    freeMem(container);
 
     const char* output = "Hello from C++";
     std::cout << output << std::endl;

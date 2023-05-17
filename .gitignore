@@ -6,6 +6,7 @@ libhello.a
 wrapper.o
 libwrapper.a
 hello-cuda.exe
+main.exe
 
 cu-hello/hello.exp
 cu-hello/hello.lib

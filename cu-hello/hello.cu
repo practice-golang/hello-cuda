@@ -5,8 +5,16 @@
 #include "hello.h"
 
 // #define N 10000000 // 1meg
-#define N 100000000 // 10meg
+#define N 100000000  // 10meg
 #define MAX_ERR 1e-6
+
+struct container {
+    int *hostData;
+    int *deviceData;
+
+    float *a, *b, *out;
+    float *d_a, *d_b, *d_out;
+};
 
 void printStatus() {
     int deviceCount;
@@ -39,60 +47,68 @@ __global__ void vector_add(float *out, float *a, float *b, int n) {
     }
 }
 
-int *hostData;
-int *deviceData;
+void *getContainer() {
+    struct container *c = (struct container *)malloc(sizeof(struct container));
+    c->hostData = NULL;
+    c->deviceData = NULL;
+    c->a = NULL;
+    c->b = NULL;
+    c->out = NULL;
+    c->d_a = NULL;
+    c->d_b = NULL;
+    c->d_out = NULL;
 
-float *a, *b, *out;
-float *d_a, *d_b, *d_out;
+    return (void *)c;
+}
 
-int sayHello() {
+int sayHello(void *void_container) {
+    struct container *c = (struct container *)void_container;
+
     // CUDA malloc host memory
-    // size_t memSize = N * sizeof(int);
-    size_t memSize = 1024 * sizeof(int);
-    cudaError_t error = cudaMallocHost((void**)&hostData, memSize);
+    size_t memSize = N * sizeof(int);
+    cudaError_t error = cudaMallocHost((void **)&c->hostData, memSize);
     if (error != cudaSuccess) {
         printf("cudaMallocHost returned error code %d, line(%d)\n", error, __LINE__);
         exit(EXIT_FAILURE);
     }
 
     // CUDA malloc device memory
-    error = cudaMalloc((void**)&deviceData, memSize);
+    error = cudaMalloc((void **)&c->deviceData, memSize);
     if (error != cudaSuccess) {
         printf("cudaMalloc returned error code %d, line(%d)\n", error, __LINE__);
         exit(EXIT_FAILURE);
     }
 
-
-    a = (float *)malloc(sizeof(float) * N);
-    b = (float *)malloc(sizeof(float) * N);
-    out = (float *)malloc(sizeof(float) * N);
+    c->a = (float *)malloc(sizeof(float) * N);
+    c->b = (float *)malloc(sizeof(float) * N);
+    c->out = (float *)malloc(sizeof(float) * N);
 
     // Initialize array
     for (int i = 0; i < N; i++) {
-        a[i] = 1.0f;
-        b[i] = 2.0f;
+        c->a[i] = 1.0f;
+        c->b[i] = 2.0f;
     }
 
     // Allocate device memory
-    cudaMalloc((void **)&d_a, sizeof(float) * N);
-    cudaMalloc((void **)&d_b, sizeof(float) * N);
-    cudaMalloc((void **)&d_out, sizeof(float) * N);
+    cudaMalloc((void **)&c->d_a, sizeof(float) * N);
+    cudaMalloc((void **)&c->d_b, sizeof(float) * N);
+    cudaMalloc((void **)&c->d_out, sizeof(float) * N);
 
     // Transfer data from host to device memory
-    cudaMemcpy(d_a, a, sizeof(float) * N, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_b, b, sizeof(float) * N, cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(c->d_a, c->a, sizeof(float) * N, cudaMemcpyHostToDevice);
+    cudaMemcpyAsync(c->d_b, c->b, sizeof(float) * N, cudaMemcpyHostToDevice);
 
     // Main function
-    vector_add<<<1, 1>>>(d_out, d_a, d_b, N);
+    vector_add<<<1, 1>>>(c->d_out, c->d_a, c->d_b, N);
 
     // Transfer data back to host memory
-    cudaMemcpy(out, d_out, sizeof(float) * N, cudaMemcpyDeviceToHost);
+    cudaMemcpyAsync(c->out, c->d_out, sizeof(float) * N, cudaMemcpyDeviceToHost);
 
     // Verification
     for (int i = 0; i < N; i++) {
-        assert(fabs(out[i] - a[i] - b[i]) < MAX_ERR);
+        assert(fabs(c->out[i] - c->a[i] - c->b[i]) < MAX_ERR);
     }
-    printf("out[0] = %f\n", out[0]);
+    printf("out[0] = %f\n", c->out[0]);
     printf("PASSED\n");
 
     printf("GPU Status:\n");
@@ -101,20 +117,26 @@ int sayHello() {
     return 0;
 }
 
-int freeMem() {
+int freeMem(void *void_container) {
+    struct container *c = (struct container *)void_container;
+    cudaDeviceSynchronize();
+
     // Deallocate device memory
-    cudaFree(d_a);
-    cudaFree(d_b);
-    cudaFree(d_out);
+    cudaFree(c->d_a);
+    cudaFree(c->d_b);
+    cudaFree(c->d_out);
+    cudaFree(c->deviceData);
 
     // Deallocate host memory
-    free(a);
-    free(b);
-    free(out);
+    free(c->a);
+    free(c->b);
+    free(c->out);
 
     // CUDA freee host memory
-    cudaFreeHost(hostData);
-    cudaFree(deviceData);
+    cudaFreeHost(c->hostData);
+
+    // delete container
+    free(c);
 
     printf("GPU Status:\n");
     printStatus();
